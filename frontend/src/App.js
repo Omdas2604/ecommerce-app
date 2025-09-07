@@ -5,6 +5,9 @@ import Signup from "./pages/SignUp";
 import ProductList from "./pages/ProductList";
 import Cart from "./pages/Cart";
 import NavBar from "./components/NavBar";
+import HomePage from "./pages/HomePage";
+import AboutPage from "./pages/AboutPage";
+import ContactSection from "./pages/ContactSection";
 
 function App() {
   const [user, setUser] = React.useState(() => {
@@ -55,14 +58,17 @@ function App() {
         onLogout={() => setAuth(null, null)}
         quantity={cartQty}
       />
-      <div style={{ padding: 20 }}>
+      <div>
         <Routes>
+          <Route path='/' element={<HomePage />}/>
+          <Route path='/contact' element={<ContactSection />}/>
+          <Route path='/about' element={<AboutPage />}/>
           <Route
-            path="/"
+            path="/products"
             element={<ProductList user={user} updateCartQty={updateCartQty} />}
           />
           <Route path="/login" element={<Login setAuth={setAuth} />} />
-          <Route path="/signup" element={<Signup setAuth={setAuth} />} />
+          <Route path="/signup" element={<Signup  />} />
           <Route
             path="/cart"
             element={<Cart user={user} updateCartQty={updateCartQty} />}
