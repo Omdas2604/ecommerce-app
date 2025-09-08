@@ -11,17 +11,10 @@ const app = express();
 
 const allowedOrigins = process.env.CORS_ORIGIN?.split(",");
 
+// REPLACE the block above with THIS block for the test
 app.use(
   cors({
-    origin: function (origin, callback) {
-      // allow requests with no origin (like Postman, server-to-server)
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("CORS not allowed"));
-      }
-    },
+    origin: "https://ecommerce-app-frontend-wine.vercel.app", // Hardcoded URL
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
