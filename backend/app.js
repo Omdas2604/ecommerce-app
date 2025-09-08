@@ -3,26 +3,21 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 
+console.log("SERVER STARTING..."); // <-- ADD THIS
+
 const authRoutes = require("./routes/auth");
 const productRoutes = require("./routes/product");
 const cartRoutes = require("./routes/cart");
 
 const app = express();
 
-const allowedOrigins = process.env.CORS_ORIGIN?.split(",");
-
-// REPLACE the block above with THIS block for the test
+// We are still using the hardcoded URL for testing
 app.use(
   cors({
-    origin: "https://ecommerce-app-frontend-wine.vercel.app", // Hardcoded URL
+    origin: "https://ecommerce-app-frontend-wine.vercel.app",
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
-
-// Handle OPTIONS preflight requests
-app.options("*", cors());
 
 app.use(express.json());
 
@@ -30,16 +25,17 @@ app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/cart", cartRoutes);
 
+console.log("Connecting to MongoDB..."); // <-- ADD THIS
 mongoose
   .connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
   .then(() => {
-    console.log("Mongo connected");
+    console.log("MONGO DATABASE CONNECTED SUCCESSFULLY"); // <-- ADD THIS
   })
   .catch((err) => {
-    console.error("Mongo connection error", err);
+    console.error("MONGO CONNECTION FAILED:", err); // <-- ADD THIS
   });
 
 module.exports = app;
