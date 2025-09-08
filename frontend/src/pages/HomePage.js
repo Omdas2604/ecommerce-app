@@ -15,7 +15,7 @@ const HeroSection = () => (
         fashion, and lifestyle essentials.
       </p>
       <Link
-        to="/"
+        to="/products"
         className="mt-8 inline-block bg-[#FE7743] text-white font-semibold py-3 px-8 rounded-full shadow-lg transform hover:scale-105 transition-transform duration-300 ease-in-out"
       >
         Shop the Collection
