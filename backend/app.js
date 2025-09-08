@@ -25,17 +25,20 @@ app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/cart", cartRoutes);
 
-console.log("Connecting to MongoDB..."); // <-- ADD THIS
-mongoose
-  .connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => {
-    console.log("MONGO DATABASE CONNECTED SUCCESSFULLY"); // <-- ADD THIS
-  })
-  .catch((err) => {
-    console.error("MONGO CONNECTION FAILED:", err); // <-- ADD THIS
-  });
+console.log("SERVER STARTING...");
+
+console.log("MONGO_URI value:", process.env.MONGO_URI ? "✅ Loaded" : "❌ Missing");
+
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+.then(() => {
+  console.log("✅ MONGO DATABASE CONNECTED SUCCESSFULLY");
+})
+.catch((err) => {
+  console.error("❌ MONGO CONNECTION FAILED:", err.message);
+});
+
 
 module.exports = app;
