@@ -91,7 +91,7 @@ export default function NavBar({ user, onLogout, quantity }) {
       {/* Mobile Menu */}
       <div className={`md:hidden ${isMobileMenuOpen ? 'block' : 'hidden'}`} id="mobile-menu">
         <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t">
-          <Link to="/" onClick={closeMobileMenu} className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-black hover:bg-gray-50">Products</Link>
+          <Link to="/products" onClick={closeMobileMenu} className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-black hover:bg-gray-50">Products</Link>
           <Link to="/cart" onClick={closeMobileMenu} className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-black hover:bg-gray-50">Cart ({quantity || 0})</Link>
 
           <div className="pt-4 pb-3 border-t border-gray-200">

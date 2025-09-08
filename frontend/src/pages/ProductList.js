@@ -1,31 +1,20 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
 import api from "../services/api";
-// A simple Toast notification component
-
-const Toast = ({ message, type }) => {
-  if (!message) return null;
-
-  const baseClasses =
-    "fixed bottom-5 right-5 p-4 rounded-lg shadow-lg text-white transition-opacity duration-300 z-50";
-  const typeClasses = type === "success" ? "bg-green-500" : "bg-red-500";
-
-  return <div className={`${baseClasses} ${typeClasses}`}>{message}</div>;
-};
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function ProductList({ updateCartQty }) {
   const [products, setProducts] = useState([]);
   const [minPrice, setMinPrice] = useState("");
-  const [maxPrice, setMaxPrice] = useState("100000"); // Set an initial max for the slider
+  const [maxPrice, setMaxPrice] = useState("100000");
   const [category, setCategory] = useState("");
   const [q, setQ] = useState("");
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-  const [notification, setNotification] = useState({ message: "", type: "" });
 
-  // --- MINIMAL CHANGE 1: Add observer refs for intersection observer ---
   const observer = useRef();
   const lastProductElementRef = useCallback(
     (node) => {
@@ -33,7 +22,6 @@ export default function ProductList({ updateCartQty }) {
       if (observer.current) observer.current.disconnect();
       observer.current = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting && hasMore) {
-          // We've reached the last element, so fetch more.
           setPage((prevPage) => prevPage + 1);
         }
       });
@@ -42,14 +30,12 @@ export default function ProductList({ updateCartQty }) {
     [loading, hasMore]
   );
 
+  // --- Replace showNotification with react-toastify ---
   const showNotification = (message, type = "success") => {
-    setNotification({ message, type });
-    setTimeout(() => {
-      setNotification({ message: "", type: "" });
-    }, 3000);
+    if (type === "success") toast.success(message);
+    else toast.error(message);
   };
 
-  // --- MINIMAL CHANGE 2: Update fetch logic to handle pagination ---
   const fetchProducts = useCallback(
     async (isNewSearch = false) => {
       setLoading(true);
@@ -63,16 +49,11 @@ export default function ProductList({ updateCartQty }) {
           page: searchPage,
         });
 
-        // If it's a new search, replace the products. Otherwise, append.
         setProducts((prevProducts) =>
           isNewSearch ? data.products : [...prevProducts, ...data.products]
         );
         setTotal(data.total);
-
-        // Stop fetching if the API returns fewer items than the limit, or none.
-        if (data.products.length === 0) {
-          setHasMore(false);
-        }
+        if (data.products.length === 0) setHasMore(false);
       } catch (error) {
         console.error("Failed to fetch products:", error);
         showNotification("Failed to load products.", "error");
@@ -81,34 +62,30 @@ export default function ProductList({ updateCartQty }) {
       }
     },
     [page, minPrice, maxPrice, category, q]
-  ); // Add dependencies
+  );
 
-  // --- MINIMAL CHANGE 3: useEffect now fetches based on page changes ---
   useEffect(() => {
-    // This effect handles both the initial load and subsequent page fetches for infinite scroll.
-    if (page === 1) return; // The initial fetch is handled by handleFilter on mount.
+    if (page === 1) return;
     fetchProducts();
   }, [page]);
 
-  // Initial load effect
   useEffect(() => {
-    handleFilter(); // Perform initial search on mount
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    handleFilter();
   }, []);
 
-  // --- MINIMAL CHANGE 4: handleFilter now resets for a new search ---
   const handleFilter = (e) => {
     if (e) e.preventDefault();
-    setPage(1); // Reset page to 1 for a new search
-    setProducts([]); // Clear existing products
-    setHasMore(true); // Allow fetching again
-    fetchProducts(true); // Pass true to indicate it's a new search
+    setPage(1);
+    setProducts([]);
+    setHasMore(true);
+    fetchProducts(true);
   };
 
   const addToCart = async (id) => {
     try {
       let res = await api.cart.add({ productId: id, quantity: 1 });
       showNotification("Added to cart successfully!", "success");
+
       let cartList = [];
       res?.data?.cart.forEach((c) =>
         cartList.push({ product: c?.product?._id, quantity: c?.quantity || 0 })
@@ -126,19 +103,19 @@ export default function ProductList({ updateCartQty }) {
         <h2 className="text-3xl font-extrabold tracking-tight text-gray-900">
           Products
         </h2>
+
         {/* Filters Section */}
         <form
           onSubmit={handleFilter}
           className="mt-8 grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-4 items-end"
         >
-          {/* Your Filter JSX remains unchanged */}
+          {/* Filter JSX remains unchanged */}
           <div>
             <label
               htmlFor="max-price"
               className="block text-sm font-medium text-gray-700"
             >
-              Max Price:{" "}
-              <span className="font-bold text-gray-900">₹{maxPrice}</span>
+              Max Price: <span className="font-bold text-gray-900">₹{maxPrice}</span>
             </label>
             <input
               id="max-price"
@@ -160,7 +137,7 @@ export default function ProductList({ updateCartQty }) {
               <option value="">All Categories</option>
               <option value="Electronics">Electronics</option>
               <option value="Fashion">Fashion</option>
-              <option value="Home">Home</option>
+              <option value="Home and Garden">Home and Garden</option>
             </select>
             <button
               type="submit"
@@ -170,13 +147,14 @@ export default function ProductList({ updateCartQty }) {
             </button>
           </div>
         </form>
+
         <div className="mt-6 text-sm text-gray-500">
           Showing {products.length} of {total} products
         </div>
+
         {/* Product Grid */}
         <div className="mt-6 grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
           {products.map((p, index) => (
-            // --- MINIMAL CHANGE 5: Attach the ref to the last element ---
             <div
               ref={products.length === index + 1 ? lastProductElementRef : null}
               key={p._id}
@@ -212,18 +190,20 @@ export default function ProductList({ updateCartQty }) {
             </div>
           ))}
         </div>
-        {/* Loading State Indicator */}
-        {loading && (
-          <div className="text-center py-10">Loading more products...</div>
-        )}
-        {/* End of List Message */}
+
+        {/* Loading State */}
+        {loading && <div className="text-center py-10">Loading more products...</div>}
+
+        {/* End Message */}
         {!hasMore && products.length > 0 && (
           <div className="text-center py-10 text-gray-500">
             You've reached the end of the list!
           </div>
         )}
       </div>
-      <Toast message={notification.message} type={notification.type} />
+
+      {/* ✅ React Toastify container */}
+      <ToastContainer position="bottom-right" autoClose={3000} />
     </div>
   );
 }

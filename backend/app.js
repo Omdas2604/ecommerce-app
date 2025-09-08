@@ -14,7 +14,7 @@ const app = express();
 // We are still using the hardcoded URL for testing
 app.use(
   cors({
-    origin: "https://ecommerce-app-frontend-wine.vercel.app",
+    origin:["https://ecommerce-app-frontend-wine.vercel.app","http://localhost:3000"],
     credentials: true,
   })
 );

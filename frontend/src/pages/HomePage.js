@@ -15,7 +15,7 @@ const HeroSection = () => (
         fashion, and lifestyle essentials.
       </p>
       <Link
-        to="/products"
+        to="/"
         className="mt-8 inline-block bg-[#FE7743] text-white font-semibold py-3 px-8 rounded-full shadow-lg transform hover:scale-105 transition-transform duration-300 ease-in-out"
       >
         Shop the Collection
@@ -47,33 +47,31 @@ const CategoriesSection = () => {
   ];
 
   return (
-    <section className="py-20  bg-[#FAF7F3]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h2 className="text-3xl md:text-4xl font-bold text-black">
-          Find Your Connection
-        </h2>
-        <div className="mt-12 flex overflow-x-auto gap-8 md:grid md:grid-cols-3 max-w-7xl mx-auto">
-          {categories.map((category) => (
-            <Link
-              to={category.link}
-              key={category.name}
-              className="group relative block overflow-hidden rounded-lg shadow-xl"
-            >
-              <img
-                src={category.image}
-                alt={category.name}
-                className="w-full h-96 object-cover transform transition-transform duration-500 ease-in-out group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <h3 className="text-2xl font-bold text-white">
-                  {category.name}
-                </h3>
-              </div>
-            </Link>
-          ))}
+    <section className="py-20 bg-[#FAF7F3]">
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <h2 className="text-3xl md:text-4xl font-bold text-black">
+      Find Your Connection
+    </h2>
+    <div className="mt-12 grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-7xl mx-auto">
+      {categories.map((category) => (
+        <div
+          key={category.name}
+          className="group relative block overflow-hidden rounded-lg shadow-xl"
+        >
+          <img
+            src={category.image}
+            alt={category.name}
+            className="w-full h-96 object-cover transform transition-transform duration-500 ease-in-out group-hover:scale-105"
+          />
+          <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <h3 className="text-2xl font-bold text-white">{category.name}</h3>
+          </div>
         </div>
-      </div>
-    </section>
+      ))}
+    </div>
+  </div>
+</section>
+
   );
 };
 
